@@ -1,0 +1,11 @@
+/home/xesar/prog/chash/TungstenBravo/bin/Debug/netcoreapp3.0/TungstenBravo
+/home/xesar/prog/chash/TungstenBravo/bin/Debug/netcoreapp3.0/TungstenBravo.deps.json
+/home/xesar/prog/chash/TungstenBravo/bin/Debug/netcoreapp3.0/TungstenBravo.runtimeconfig.json
+/home/xesar/prog/chash/TungstenBravo/bin/Debug/netcoreapp3.0/TungstenBravo.runtimeconfig.dev.json
+/home/xesar/prog/chash/TungstenBravo/bin/Debug/netcoreapp3.0/TungstenBravo.dll
+/home/xesar/prog/chash/TungstenBravo/bin/Debug/netcoreapp3.0/TungstenBravo.pdb
+/home/xesar/prog/chash/TungstenBravo/obj/Debug/netcoreapp3.0/TungstenBravo.csprojAssemblyReference.cache
+/home/xesar/prog/chash/TungstenBravo/obj/Debug/netcoreapp3.0/TungstenBravo.AssemblyInfoInputs.cache
+/home/xesar/prog/chash/TungstenBravo/obj/Debug/netcoreapp3.0/TungstenBravo.AssemblyInfo.cs
+/home/xesar/prog/chash/TungstenBravo/obj/Debug/netcoreapp3.0/TungstenBravo.dll
+/home/xesar/prog/chash/TungstenBravo/obj/Debug/netcoreapp3.0/TungstenBravo.pdb
