@@ -18,10 +18,26 @@ class RPN{
 	public RPN(string formula){
 		this.formula = Regex.Replace(formula,@"\s+","").ToLower();
 	}
-	private void divideTokens(){
+	public void divideTokens(){
+		string shortTokens = "abs cos exp log sin tan";
+		string longTokens = "sqrt cosh sinh tanh acos asin atan";
 		for(int i=0; i<formula.Length; i++){
+			string shortToken = "";
+			string longToken = "";
+			if(i+2<formula.Length){
+				shortToken = formula[i].ToString()+formula[i+1].ToString()+formula[i+2].ToString();
+			}
+			if(i+3<formula.Length){
+				longToken = formula[i].ToString()+formula[i+1].ToString()+formula[i+2].ToString()+formula[i+3].ToString();
+			}
 			if("()^*/+-".Contains(formula[i])){
 				infixTokens.Add(formula[i].ToString());
+			}else if(shortToken.Length>0 && shortTokens.Contains(shortToken)){
+				infixTokens.Add(shortToken);
+				i+=2;
+			}else if(longToken.Length>0 && longTokens.Contains(longToken)){
+				infixTokens.Add(longToken);
+				i+=3;
 			}else{
 				string temp = formula[i].ToString();
 				while(i+1<formula.Length && "1234567890,.".Contains(formula[i+1])){
@@ -32,49 +48,70 @@ class RPN{
 			}
 		}
 	}
-	private void toPostfix(){
-        Stack<string> s = new Stack<string>();
-        for(int i=0; i<infixTokens.Count; i++){
-            if(!("()^*/+-".Contains(infixTokens[i])))
-                postfixTokens.Add(infixTokens[i]);
-            else if(infixTokens[i]=="(")
-                s.Push(infixTokens[i]);
-            else if(infixTokens[i]==")"){
-                while(s.Count>0 && s.Peek()!="(")
-                    postfixTokens.Add(s.Pop());
-                s.Pop();
-            }else{
-                while(s.Count>0 && d[infixTokens[i]]<=d[s.Peek()])
-                    postfixTokens.Add(s.Pop());
-                s.Push(infixTokens[i]);
-            }
-        }
-        while(s.Count>0)
-            postfixTokens.Add(s.Pop());
+	public void toPostfix(){
+		Stack<string> s = new Stack<string>();
+		for(int i=0; i<infixTokens.Count; i++){
+			if(!("()^*/+-".Contains(infixTokens[i])) && !(d.ContainsKey(infixTokens[i])))
+				postfixTokens.Add(infixTokens[i]);
+			else if(infixTokens[i]=="(")
+				s.Push(infixTokens[i]);
+			else if(infixTokens[i]==")"){
+				while(s.Count>0 && s.Peek()!="(")
+					postfixTokens.Add(s.Pop());
+				s.Pop();
+			}else{
+				while(s.Count>0 && d[infixTokens[i]]<=d[s.Peek()])
+					postfixTokens.Add(s.Pop());
+				s.Push(infixTokens[i]);
+			}
+		}
+		while(s.Count>0)
+			postfixTokens.Add(s.Pop());
 	}
-	private bool validate(){
+	public bool validate(){
+		Regex operators = new Regex(@"[\-+*/^%]");
+		int beginBracket = 0, endBracket = 0;
+
+		foreach(char c in formula){
+			if(c=='(') beginBracket++;
+			if(c==')') endBracket++;
+		}
+		if(beginBracket!=endBracket) return false;
+
+		if(string.IsNullOrEmpty(formula)) return false;
+
+		string temp = operators.Replace(formula,".");
+		string[] incorrectOperatorOrder = new string[]{"(.",".)","..",",,","(,",",)"};
+		foreach(string str in incorrectOperatorOrder){
+			if(temp.Contains(str)) return false;
+		}
+
+		if(formula.StartsWith("*") || formula.StartsWith("/") || formula.StartsWith("+") || formula.StartsWith("-") || formula.StartsWith("^")) return false;
+
+		if(formula.EndsWith("*") || formula.EndsWith("/") || formula.EndsWith("+") || formula.EndsWith("-") || formula.EndsWith("^")) return false;
+
 		return true;
 	}
-    public string getFormula(){
-        return formula;
-    }
-    public void printFormula(){
-        Console.WriteLine(formula);
-    }
-    public List<string> getInfixTokens(){
-        return infixTokens;
-    }
-    public List<string> getPostfixTokens(){
-        return postfixTokens;
-    }
-    public void printInfix(){
-        foreach(string str in infixTokens)
-            Console.Write(str+" ");
-        Console.WriteLine();
-    }
-    public void printPostfix(){
-        foreach(string str in postfixTokens)
-            Console.Write(str+" ");
-        Console.WriteLine();
-    }
+	public string getFormula(){
+		return formula;
+	}
+	public void printFormula(){
+		Console.WriteLine(formula);
+	}
+	public List<string> getInfixTokens(){
+		return infixTokens;
+	}
+	public List<string> getPostfixTokens(){
+		return postfixTokens;
+	}
+	public void printInfix(){
+		foreach(string str in infixTokens)
+			Console.Write(str+" ");
+		Console.WriteLine();
+	}
+	public void printPostfix(){
+		foreach(string str in postfixTokens)
+			Console.Write(str+" ");
+		Console.WriteLine();
+	}
 }
