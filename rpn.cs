@@ -18,6 +18,7 @@ class RPN{
 	};
 	public RPN(string formula){
 		this.formula = Regex.Replace(formula,@"\s+","").ToLower();
+		this.formula = this.formula.Replace(".",",");
 	}
 	public void divideTokens(){
 		string shortTokens = "abs cos exp log sin tan";
@@ -41,7 +42,7 @@ class RPN{
 				i+=3;
 			}else{
 				string temp = formula[i].ToString();
-				while(i+1<formula.Length && "1234567890,.".Contains(formula[i+1])){
+				while(i+1<formula.Length && "1234567890,".Contains(formula[i+1])){
 					temp+=formula[i+1].ToString();
 					i++;
 				}
@@ -111,8 +112,46 @@ class RPN{
 			errorMsg="Cannot end formula with an operator";
 			return false;
 		}
-
 		return true;
+	}
+	public double evaluateForX(double x){
+		Stack<string> s = new Stack<string>();
+		Regex numRegex = new Regex(@"^[0-9]+$");
+		string mathFunctions = "abs cos exp log sin tan sqrt cosh sinh tanh acos asin atan";
+		foreach(string token in postfixTokens){
+			if(numRegex.IsMatch(token)){
+				s.Push(token);
+			}else if(token=="x"){
+				s.Push(x.ToString());
+			}else if("^*/+-".Contains(token)){
+				double a = double.Parse(s.Pop());
+				double b = double.Parse(s.Pop());
+				if(token=="^") a=Math.Pow(b,a);
+				else if(token=="*") a=b*a;
+				else if(token=="/") a=b/a;
+				else if(token=="+") a=b+a;
+				else a=b-a;
+				s.Push(a.ToString());
+			}else if(mathFunctions.Contains(token)){
+				if(token=="sqrt") s.Push(Math.Sqrt(double.Parse(s.Pop())).ToString());
+				else if(token=="abs") s.Push(Math.Abs(double.Parse(s.Pop())).ToString());
+				else if(token=="exp") s.Push(Math.Exp(double.Parse(s.Pop())).ToString());
+				else if(token=="log") s.Push(Math.Log(double.Parse(s.Pop())).ToString());
+				else if(token=="sin") s.Push(Math.Sin(double.Parse(s.Pop())).ToString());
+				else if(token=="cos") s.Push(Math.Cos(double.Parse(s.Pop())).ToString());
+				else if(token=="tan") s.Push(Math.Tan(double.Parse(s.Pop())).ToString());
+				else if(token=="asin") s.Push(Math.Asin(double.Parse(s.Pop())).ToString());
+				else if(token=="acos") s.Push(Math.Acos(double.Parse(s.Pop())).ToString());
+				else if(token=="atan") s.Push(Math.Atan(double.Parse(s.Pop())).ToString());
+				else if(token=="cosh") s.Push(Math.Cosh(double.Parse(s.Pop())).ToString());
+				else if(token=="sinh") s.Push(Math.Sinh(double.Parse(s.Pop())).ToString());
+				else if(token=="tanh") s.Push(Math.Tanh(double.Parse(s.Pop())).ToString());
+			}
+		}
+		return double.Parse(s.Pop());
+	}
+	public void setFormula(string formula){
+		this.formula=formula;
 	}
 	public string getFormula(){
 		return formula;
@@ -129,13 +168,13 @@ class RPN{
 	public List<string> getInfixTokens(){
 		return infixTokens;
 	}
-	public List<string> getPostfixTokens(){
-		return postfixTokens;
-	}
 	public void printInfix(){
 		foreach(string str in infixTokens)
 			Console.Write(str+" ");
 		Console.WriteLine();
+	}
+	public List<string> getPostfixTokens(){
+		return postfixTokens;
 	}
 	public void printPostfix(){
 		foreach(string str in postfixTokens)
