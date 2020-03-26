@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -133,19 +134,23 @@ class RPN{
 				else a=b-a;
 				s.Push(a.ToString());
 			}else if(mathFunctions.Contains(token)){
-				if(token=="sqrt") s.Push(Math.Sqrt(double.Parse(s.Pop())).ToString());
-				else if(token=="abs") s.Push(Math.Abs(double.Parse(s.Pop())).ToString());
-				else if(token=="exp") s.Push(Math.Exp(double.Parse(s.Pop())).ToString());
-				else if(token=="log") s.Push(Math.Log(double.Parse(s.Pop())).ToString());
-				else if(token=="sin") s.Push(Math.Sin(double.Parse(s.Pop())).ToString());
-				else if(token=="cos") s.Push(Math.Cos(double.Parse(s.Pop())).ToString());
-				else if(token=="tan") s.Push(Math.Tan(double.Parse(s.Pop())).ToString());
-				else if(token=="asin") s.Push(Math.Asin(double.Parse(s.Pop())).ToString());
-				else if(token=="acos") s.Push(Math.Acos(double.Parse(s.Pop())).ToString());
-				else if(token=="atan") s.Push(Math.Atan(double.Parse(s.Pop())).ToString());
-				else if(token=="cosh") s.Push(Math.Cosh(double.Parse(s.Pop())).ToString());
-				else if(token=="sinh") s.Push(Math.Sinh(double.Parse(s.Pop())).ToString());
-				else if(token=="tanh") s.Push(Math.Tanh(double.Parse(s.Pop())).ToString());
+				string tempToken = token.Substring(0,1).ToUpper()+token.Substring(1);
+				MethodInfo method = typeof(Math).GetMethod(tempToken,new[] {typeof(double)});
+				s.Push(method.Invoke(null,new object[]{double.Parse(s.Pop())}).ToString());
+				
+				// if(token=="sqrt") s.Push(Math.Sqrt(double.Parse(s.Pop())).ToString());
+				// else if(token=="abs") s.Push(Math.Abs(double.Parse(s.Pop())).ToString());
+				// else if(token=="exp") s.Push(Math.Exp(double.Parse(s.Pop())).ToString());
+				// else if(token=="log") s.Push(Math.Log(double.Parse(s.Pop())).ToString());
+				// else if(token=="sin") s.Push(Math.Sin(double.Parse(s.Pop())).ToString());
+				// else if(token=="cos") s.Push(Math.Cos(double.Parse(s.Pop())).ToString());
+				// else if(token=="tan") s.Push(Math.Tan(double.Parse(s.Pop())).ToString());
+				// else if(token=="asin") s.Push(Math.Asin(double.Parse(s.Pop())).ToString());
+				// else if(token=="acos") s.Push(Math.Acos(double.Parse(s.Pop())).ToString());
+				// else if(token=="atan") s.Push(Math.Atan(double.Parse(s.Pop())).ToString());
+				// else if(token=="cosh") s.Push(Math.Cosh(double.Parse(s.Pop())).ToString());
+				// else if(token=="sinh") s.Push(Math.Sinh(double.Parse(s.Pop())).ToString());
+				// else if(token=="tanh") s.Push(Math.Tanh(double.Parse(s.Pop())).ToString());
 			}
 		}
 		return double.Parse(s.Pop());
