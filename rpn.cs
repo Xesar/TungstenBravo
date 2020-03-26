@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 
 class RPN{
 	private string formula;
+	private string errorMsg;
 	private List<string> infixTokens = new List<string>();
 	private List<string> postfixTokens = new List<string>();
 	private static Dictionary<string,int> d = new Dictionary<string,int>(){
@@ -72,23 +73,44 @@ class RPN{
 		Regex operators = new Regex(@"[\-+*/^%]");
 		int beginBracket = 0, endBracket = 0;
 
-		foreach(char c in formula){
-			if(c=='(') beginBracket++;
-			if(c==')') endBracket++;
+		for(int i=0; i<formula.Length; i++){
+			if(formula[i]=='('){
+				if(formula[i+1]==')'){
+					errorMsg="Epmty brackets";
+					return false;
+				}
+				beginBracket++;
+			}
+			if(formula[i]==')') endBracket++;
 		}
-		if(beginBracket!=endBracket) return false;
+		if(beginBracket!=endBracket){
+			errorMsg="Wrong number of brackets";
+			return false;
+		}
 
-		if(string.IsNullOrEmpty(formula)) return false;
+		if(string.IsNullOrEmpty(formula)){
+			errorMsg="No formula detected";
+			return false;
+		}
 
 		string temp = operators.Replace(formula,".");
 		string[] incorrectOperatorOrder = new string[]{"(.",".)","..",",,","(,",",)"};
 		foreach(string str in incorrectOperatorOrder){
-			if(temp.Contains(str)) return false;
+			if(temp.Contains(str)){
+				errorMsg="Wrong operator order";
+				return false;
+			}
 		}
 
-		if(formula.StartsWith("*") || formula.StartsWith("/") || formula.StartsWith("+") || formula.StartsWith("-") || formula.StartsWith("^")) return false;
+		if(formula.StartsWith("*") || formula.StartsWith("/") || formula.StartsWith("+") || formula.StartsWith("-") || formula.StartsWith("^")){
+			errorMsg="Cannot begin formula with an operator";
+			return false;
+		}
 
-		if(formula.EndsWith("*") || formula.EndsWith("/") || formula.EndsWith("+") || formula.EndsWith("-") || formula.EndsWith("^")) return false;
+		if(formula.EndsWith("*") || formula.EndsWith("/") || formula.EndsWith("+") || formula.EndsWith("-") || formula.EndsWith("^")){
+			errorMsg="Cannot end formula with an operator";
+			return false;
+		}
 
 		return true;
 	}
@@ -97,6 +119,12 @@ class RPN{
 	}
 	public void printFormula(){
 		Console.WriteLine(formula);
+	}
+	public string getErrorMsg(){
+		return errorMsg;
+	}
+	public void printErrorMsg(){
+		Console.WriteLine(errorMsg);
 	}
 	public List<string> getInfixTokens(){
 		return infixTokens;
