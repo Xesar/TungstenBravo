@@ -73,7 +73,7 @@ class RPN{
 	}
 	public bool validate(){
 		Regex operators = new Regex(@"[\-+*/^%]");
-		int beginBracket = 0, endBracket = 0;
+		int bracketCount = 0;
 
 		for(int i=0; i<formula.Length; i++){
 			if(formula[i]=='('){
@@ -81,11 +81,11 @@ class RPN{
 					errorMsg="Epmty brackets";
 					return false;
 				}
-				beginBracket++;
+				bracketCount++;
 			}
-			if(formula[i]==')') endBracket++;
+			if(formula[i]==')') bracketCount--;
 		}
-		if(beginBracket!=endBracket){
+		if(bracketCount!=0){
 			errorMsg="Wrong number of brackets";
 			return false;
 		}
@@ -137,23 +137,18 @@ class RPN{
 				string tempToken = token.Substring(0,1).ToUpper()+token.Substring(1);
 				MethodInfo method = typeof(Math).GetMethod(tempToken,new[] {typeof(double)});
 				s.Push(method.Invoke(null,new object[]{double.Parse(s.Pop())}).ToString());
-				
-				// if(token=="sqrt") s.Push(Math.Sqrt(double.Parse(s.Pop())).ToString());
-				// else if(token=="abs") s.Push(Math.Abs(double.Parse(s.Pop())).ToString());
-				// else if(token=="exp") s.Push(Math.Exp(double.Parse(s.Pop())).ToString());
-				// else if(token=="log") s.Push(Math.Log(double.Parse(s.Pop())).ToString());
-				// else if(token=="sin") s.Push(Math.Sin(double.Parse(s.Pop())).ToString());
-				// else if(token=="cos") s.Push(Math.Cos(double.Parse(s.Pop())).ToString());
-				// else if(token=="tan") s.Push(Math.Tan(double.Parse(s.Pop())).ToString());
-				// else if(token=="asin") s.Push(Math.Asin(double.Parse(s.Pop())).ToString());
-				// else if(token=="acos") s.Push(Math.Acos(double.Parse(s.Pop())).ToString());
-				// else if(token=="atan") s.Push(Math.Atan(double.Parse(s.Pop())).ToString());
-				// else if(token=="cosh") s.Push(Math.Cosh(double.Parse(s.Pop())).ToString());
-				// else if(token=="sinh") s.Push(Math.Sinh(double.Parse(s.Pop())).ToString());
-				// else if(token=="tanh") s.Push(Math.Tanh(double.Parse(s.Pop())).ToString());
 			}
 		}
 		return double.Parse(s.Pop());
+	}
+	public double[,] evaluateForRange(double start, double end, int N){
+		double[,] results = new double[2,N];
+		double h = (end-start)/(N-1);
+		for(int i=0; i<N; i++){
+			results[0,i]=start+i*h;
+			results[1,i]=evaluateForX(start+i*h);
+		}
+		return results;
 	}
 	public void setFormula(string formula){
 		this.formula=formula;
