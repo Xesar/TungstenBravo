@@ -17,36 +17,24 @@ class RPN{
 	};
 	public RPN(string formula){
 		this.formula = Regex.Replace(formula,@"\s+","").ToLower();
-		Console.WriteLine(this.formula);
-		divideTokens();
-		toPostfix();
-        //-----------------------------------
-        foreach(string str in postfixTokens){
-            Console.Write(str+" ");
-        }
-        Console.WriteLine();
 	}
 	private void divideTokens(){
-		for(int i=0; i<this.formula.Length; i++){
-			if("()^*/+-".Contains(this.formula[i])){
-				this.infixTokens.Add(this.formula[i].ToString());
+		for(int i=0; i<formula.Length; i++){
+			if("()^*/+-".Contains(formula[i])){
+				infixTokens.Add(formula[i].ToString());
 			}else{
-				string temp = this.formula[i].ToString();
-				while(i+1<this.formula.Length && "1234567890".Contains(this.formula[i+1])){
-					temp+=this.formula[i+1].ToString();
+				string temp = formula[i].ToString();
+				while(i+1<formula.Length && "1234567890,.".Contains(formula[i+1])){
+					temp+=formula[i+1].ToString();
 					i++;
 				}
-				this.infixTokens.Add(temp);
+				infixTokens.Add(temp);
 			}
 		}
-		foreach(string str in infixTokens){
-			Console.Write(str+" ");
-		}
-		Console.WriteLine();
 	}
 	private void toPostfix(){
         Stack<string> s = new Stack<string>();
-        for(int i=0; i<this.infixTokens.Count; i++){
+        for(int i=0; i<infixTokens.Count; i++){
             if(!("()^*/+-".Contains(infixTokens[i])))
                 postfixTokens.Add(infixTokens[i]);
             else if(infixTokens[i]=="(")
@@ -64,7 +52,29 @@ class RPN{
         while(s.Count>0)
             postfixTokens.Add(s.Pop());
 	}
-	private bool check(){
+	private bool validate(){
 		return true;
 	}
+    public string getFormula(){
+        return formula;
+    }
+    public void printFormula(){
+        Console.WriteLine(formula);
+    }
+    public List<string> getInfixTokens(){
+        return infixTokens;
+    }
+    public List<string> getPostfixTokens(){
+        return postfixTokens;
+    }
+    public void printInfix(){
+        foreach(string str in infixTokens)
+            Console.Write(str+" ");
+        Console.WriteLine();
+    }
+    public void printPostfix(){
+        foreach(string str in postfixTokens)
+            Console.Write(str+" ");
+        Console.WriteLine();
+    }
 }
