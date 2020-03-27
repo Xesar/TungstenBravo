@@ -19,7 +19,12 @@ class Program{
                     foreach(string token in postfixTokens){
                         if(token=="x") return;
                     }
-                    Console.WriteLine(rpn.evaluateForX(0));
+                    double res = rpn.evaluateForX(0);
+                    if(double.IsNaN(res)){
+                        Console.WriteLine("Hey boss, problem:\n"+rpn.getErrorMsg());
+                    }else{
+                        Console.WriteLine(res);
+                    }
                     return;
 				}
 			}
