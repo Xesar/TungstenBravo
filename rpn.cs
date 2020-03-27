@@ -125,7 +125,7 @@ class RPN{
 		
 		foreach(string token in infixTokens){
 			if(!numRegex.IsMatch(token) && !allowedTokens.Contains(token)){
-				Console.WriteLine(token+": not number/operator/math function or other unallowed character");
+				this.errorMsg=token+": not number/operator/math function or other unallowed character";
 				return false;
 			}
 		}
