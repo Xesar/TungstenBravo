@@ -177,12 +177,12 @@ class RPN{
 				if(token=="^") a=Math.Pow(b,a);
 				else if(token=="*") a=b*a;
 				else if(token=="/"){
-                    if(a==0){
-                        this.errorMsg="Division by 0";
-                        return double.NaN;
-                    }
-                    a=b/a;
-                }
+					if(a==0){
+						this.errorMsg="Division by 0";
+						return double.NaN;
+					}
+					a=b/a;
+				}
 				else if(token=="+") a=b+a;
 				else a=b-a;
 				s.Push(a.ToString());
