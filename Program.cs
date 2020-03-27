@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 class Program{
 	static void Main(string[] args){
+        RPN rpn;
 		if(args.Length==0 || args.Length==3 || args.Length>5){
 			Console.WriteLine("Hey boss, problem:\nincorrect number of arguments");
 			return;
-		}
-		if(args.Length==1){
-			RPN rpn = new RPN(args[0]);
+		}else if(args.Length==1){
+			rpn = new RPN(args[0]);
 			if(rpn.preValidate()){
 				rpn.divideTokens();
 				if(rpn.postValidate()){
@@ -20,30 +20,27 @@ class Program{
                         if(token=="x") return;
                     }
                     double res = rpn.evaluateForX(0);
-                    if(double.IsNaN(res)){
-                        Console.WriteLine("Hey boss, problem:\n"+rpn.getErrorMsg());
-                    }else{
+                    if(!double.IsNaN(res)){
                         Console.WriteLine(res);
                     }
-                    return;
 				}
 			}
-			Console.WriteLine("Hey boss, problem:\n"+rpn.getErrorMsg());
 		}else if(args.Length==2){
-			RPN rpn = new RPN(args[0]);
+			rpn = new RPN(args[0]);
 			if(rpn.preValidate()){
 				rpn.divideTokens();
 				if(rpn.postValidate()){
 					rpn.printInfix();
 					rpn.toPostfix();
 					rpn.printPostfix();
-					Console.WriteLine(rpn.evaluateForX(double.Parse(args[1])));
-					return;
+                    double res = rpn.evaluateForX(double.Parse(args[1]));
+                    if(!double.IsNaN(res)){
+                        Console.WriteLine(res);
+                    }
 				}
 			}
-			Console.WriteLine("Hey boss, problem:\n"+rpn.getErrorMsg());
 		}else if(args.Length==4){
-			RPN rpn = new RPN(args[0]);
+			rpn = new RPN(args[0]);
 			if(rpn.preValidate()){
 				rpn.divideTokens();
 				if(rpn.postValidate()){
@@ -51,28 +48,35 @@ class Program{
 					rpn.toPostfix();
 					rpn.printPostfix();
 					double[,] result = rpn.evaluateForRange(double.Parse(args[1]),double.Parse(args[2]),int.Parse(args[3]));
-					for(int i=0; i<result.GetLength(1); i++)
-						Console.WriteLine($"{result[0,i]} => {result[1,i]}");
-					return;
+					for(int i=0; i<result.GetLength(1); i++){
+                        if(!double.IsNaN(result[1,i])){
+                            Console.WriteLine($"{result[0,i]} => {result[1,i]}");
+                        }else break;
+                    }
 				}
 			}
-			Console.WriteLine("Hey boss, problem:\n"+rpn.getErrorMsg());
 		}else{
-			RPN rpn = new RPN(args[0]);
+			rpn = new RPN(args[0]);
 			if(rpn.preValidate()){
 				rpn.divideTokens();
 				if(rpn.postValidate()){
 					rpn.printInfix();
 					rpn.toPostfix();
 					rpn.printPostfix();
-					Console.WriteLine(rpn.evaluateForX(double.Parse(args[1])));
+                    double res = rpn.evaluateForX(double.Parse(args[1]));
+                    if(!double.IsNaN(res)){
+                        Console.WriteLine(res);
+                    }
 					double[,] result = rpn.evaluateForRange(double.Parse(args[2]),double.Parse(args[3]),int.Parse(args[4]));
-					for(int i=0; i<result.GetLength(1); i++)
-						Console.WriteLine($"{result[0,i]} => {result[1,i]}");
-					return;
+					for(int i=0; i<result.GetLength(1); i++){
+                        if(!double.IsNaN(result[1,i])){
+                            Console.WriteLine($"{result[0,i]} => {result[1,i]}");
+                        }else break;
+                    }
 				}
 			}
-			Console.WriteLine("Hey boss, problem:\n"+rpn.getErrorMsg());
 		}
+        if(rpn.getErrorMsg()!="")
+		    Console.WriteLine("Hey boss, problem:\n"+rpn.getErrorMsg());
 	}
 }

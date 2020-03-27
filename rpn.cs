@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 class RPN{
-	private string formula;
-	private string errorMsg;
+	private string formula="";
+	private string errorMsg="";
 	private bool preValidated = false;
 	private bool tokensDivided = false;
 	private bool postValidated = false;
@@ -196,7 +196,7 @@ class RPN{
 	}
 	public double[,] evaluateForRange(double start, double end, int N){
 		double[,] results = new double[2,N];
-		double h = (end-start)/(N-1);
+		double h = (end-start)/(N-1.0);
 		for(int i=0; i<N; i++){
 			results[0,i]=start+i*h;
 			results[1,i]=evaluateForX(start+i*h);
