@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 class Program{
 	static void Main(string[] args){
@@ -14,7 +15,12 @@ class Program{
 					rpn.printInfix();
 					rpn.toPostfix();
 					rpn.printPostfix();
-					return;
+                    List<string> postfixTokens = rpn.getInfixTokens();
+                    foreach(string token in postfixTokens){
+                        if(token=="x") return;
+                    }
+                    Console.WriteLine(rpn.evaluateForX(0));
+                    return;
 				}
 			}
 			Console.WriteLine("Hey boss, problem:\n"+rpn.getErrorMsg());
