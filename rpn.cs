@@ -4,9 +4,8 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-class RPN{
+class rpn{
 	private string formula="";
-	private string errorMsg="";
 	private bool preValidated = false;
 	private bool tokensDivided = false;
 	private bool postValidated = false;
@@ -21,75 +20,62 @@ class RPN{
 		{"+",1},{"-",1},
 		{"(",0}
 	};
-	public RPN(string formula){
+	public rpn(string formula){
 		this.formula=Regex.Replace(formula,@"\s+","").ToLower();
 		this.formula=this.formula.Replace(".",",");
-		if(this.formula[0]=='-') this.formula=this.formula.Insert(0,"0");
+		if(this.formula[0]=='-')
+            this.formula=this.formula.Insert(0,"0");
+        preValidate();
 	}
-	public bool preValidate(){
+	public void preValidate(){
 		Regex operators = new Regex(@"[\+*/^%]");
 		int bracketCount = 0;
 
-		if(string.IsNullOrEmpty(formula)){
-			errorMsg="No formula detected";
-			return false;
-		}
+		if(string.IsNullOrEmpty(formula))
+            throw new rpnException("No formula detected");
 
 		for(int i=0; i<formula.Length; i++){
 			if(formula[i]=='('){
-				if(formula[i+1]==')'){
-					errorMsg="Empty brackets";
-					return false;
-				}
+				if(formula[i+1]==')')
+                    throw new rpnException("Empty brackets");
 				bracketCount++;
 			}
-			if(formula[i]==')') bracketCount--;
+			if(formula[i]==')')
+                bracketCount--;
 		}
-		if(bracketCount!=0){
-			errorMsg="Wrong number of brackets";
-			return false;
-		}
+		if(bracketCount!=0)
+            throw new rpnException("Wrong number of brackets");
 
 		string temp = operators.Replace(formula,".");
 		string[] incorrectOperatorOrder = new string[]{"(.)","(.",".)","..",",,","(,",",)","(-)","-)","--"};
-		foreach(string str in incorrectOperatorOrder){
-			if(temp.Contains(str)){
-				errorMsg="Wrong operator order";
-				return false;
-			}
-		}
+		foreach(string str in incorrectOperatorOrder)
+			if(temp.Contains(str))
+                throw new rpnException("Wrong operator order");
 
-		if(formula.StartsWith("*") || formula.StartsWith("/") || formula.StartsWith("+") || formula.StartsWith("-") || formula.StartsWith("^")){
-			errorMsg="Cannot begin formula with an operator";
-			return false;
-		}
+		if(formula.StartsWith("*") || formula.StartsWith("/") || formula.StartsWith("+") || formula.StartsWith("-") || formula.StartsWith("^"))
+			throw new rpnException("Cannot begin formula with an operator");
 
-		if(formula.EndsWith("*") || formula.EndsWith("/") || formula.EndsWith("+") || formula.EndsWith("-") || formula.EndsWith("^")){
-			errorMsg="Cannot end formula with an operator";
-			return false;
-		}
+		if(formula.EndsWith("*") || formula.EndsWith("/") || formula.EndsWith("+") || formula.EndsWith("-") || formula.EndsWith("^"))
+			throw new rpnException("Cannot end formula with an operator");
+
 		this.preValidated=true;
-		return true;
 	}
 	public void divideTokens(){
-		if(!preValidated){
-			Console.WriteLine("Pre-validate first");
-			return;
-		}
+		if(!preValidated)
+            throw new rpnException("Not pre-validated");
+
 		string shortTokens = "abs cos exp log sin tan";
 		string longTokens = "sqrt cosh sinh tanh acos asin atan";
 		for(int i=0; i<formula.Length; i++){
 			string shortToken = "";
 			string longToken = "";
-			if(i+2<formula.Length){
-				shortToken = formula[i].ToString()+formula[i+1].ToString()+formula[i+2].ToString();
-			}
-			if(i+3<formula.Length){
-				longToken = formula[i].ToString()+formula[i+1].ToString()+formula[i+2].ToString()+formula[i+3].ToString();
-			}
+			if(i+2<formula.Length)
+                shortToken = formula[i].ToString()+formula[i+1].ToString()+formula[i+2].ToString();
+			if(i+3<formula.Length)
+                longToken = formula[i].ToString()+formula[i+1].ToString()+formula[i+2].ToString()+formula[i+3].ToString();
 			if("()^*/+-".Contains(formula[i])){
 				if(i>0 && formula[i-1]=='(' && formula[i]=='-')
-					infixTokens.Add(0d.ToString());
+                    infixTokens.Add(0d.ToString());
 				infixTokens.Add(formula[i].ToString());
 			}else if(shortToken.Length>0 && shortTokens.Contains(shortToken)){
 				infixTokens.Add(shortToken);
@@ -110,59 +96,54 @@ class RPN{
 				}
 				infixTokens.Add(temp);
 				if(i+1<formula.Length && formula[i+1]=='x')
-					infixTokens.Add("*");
+                    infixTokens.Add("*");
 			}
 		}
 		this.tokensDivided=true;
+        postValidate();
 	}
-	public bool postValidate(){
-		if(!tokensDivided){
-			Console.WriteLine("Divide tokens first");
-			return false;
-		}
+	public void postValidate(){
+		if(!tokensDivided)
+            throw new rpnException("Divide tokens first");
+
 		Regex numRegex = new Regex(@"^\d*\,?\d*$");
 		string[] allowedTokens = new string[]{"(",")","+","-","/","*","^","x","abs","cos","exp","log","sin","tan","sqrt","cosh","sinh","tanh","acos","asin","atan"};
 		
-		foreach(string token in infixTokens){
-			if(!numRegex.IsMatch(token) && !allowedTokens.Contains(token)){
-				this.errorMsg=token+": not number/operator/math function or other unallowed character";
-				return false;
-			}
-		}
+		foreach(string token in infixTokens)
+			if(!numRegex.IsMatch(token) && !allowedTokens.Contains(token))
+				throw new rpnException(token+": not number/operator/math function or other unallowed character");
 		
 		this.postValidated=true;
-		return true;
 	}
 	public void toPostfix(){
-		if(!postValidated){
-			Console.WriteLine("Post-validate first");
-			return;
-		}
+		if(!postValidated)
+            throw new rpnException("Post-validate first");
+
 		Stack<string> s = new Stack<string>();
 		for(int i=0; i<infixTokens.Count; i++){
 			if(!("()^*/+-".Contains(infixTokens[i])) && !(d.ContainsKey(infixTokens[i])))
-				postfixTokens.Add(infixTokens[i]);
+                postfixTokens.Add(infixTokens[i]);
 			else if(infixTokens[i]=="(")
-				s.Push(infixTokens[i]);
+                s.Push(infixTokens[i]);
 			else if(infixTokens[i]==")"){
 				while(s.Count>0 && s.Peek()!="(")
-					postfixTokens.Add(s.Pop());
+                    postfixTokens.Add(s.Pop());
 				s.Pop();
 			}else{
 				while(s.Count>0 && d[infixTokens[i]]<=d[s.Peek()])
-					postfixTokens.Add(s.Pop());
+                    postfixTokens.Add(s.Pop());
 				s.Push(infixTokens[i]);
 			}
 		}
 		while(s.Count>0)
-			postfixTokens.Add(s.Pop());
+            postfixTokens.Add(s.Pop());
+
 		this.postfixParsed=true;
 	}
 	public double evaluateForX(double x){
-		if(!postfixParsed){
-			Console.WriteLine("Parse to postfix fisrt");
-			return double.NaN;
-		}
+		if(!postfixParsed)
+			throw new rpnException("Parse to postfix fisrt");
+
 		Stack<string> s = new Stack<string>();
 		Regex numRegex = new Regex(@"^\d*\,?\d*$");
 		string mathFunctions = "abs cos exp log sin tan sqrt cosh sinh tanh acos asin atan";
@@ -174,17 +155,19 @@ class RPN{
 			}else if("^*/+-".Contains(token)){
 				double a = double.Parse(s.Pop());
 				double b = double.Parse(s.Pop());
-				if(token=="^") a=Math.Pow(b,a);
-				else if(token=="*") a=b*a;
+				if(token=="^")
+                    a=Math.Pow(b,a);
+				else if(token=="*")
+                    a=b*a;
 				else if(token=="/"){
-					if(a==0){
-						this.errorMsg="Division by 0";
-						return double.NaN;
-					}
+					if(a==0)
+						throw new rpnException("Division by 0");
 					a=b/a;
 				}
-				else if(token=="+") a=b+a;
-				else a=b-a;
+				else if(token=="+")
+                    a=b+a;
+				else
+                    a=b-a;
 				s.Push(a.ToString());
 			}else if(mathFunctions.Contains(token)){
 				string tempToken = token.Substring(0,1).ToUpper()+token.Substring(1);
@@ -192,7 +175,11 @@ class RPN{
 				s.Push(method.Invoke(null,new object[]{double.Parse(s.Pop())}).ToString());
 			}
 		}
-		return double.Parse(s.Pop());
+        double result = double.Parse(s.Pop());
+		if(Double.IsNaN(result))
+            throw new rpnException("Result not computable, not a number");
+        else
+            return result;
 	}
 	public double[,] evaluateForRange(double start, double end, int N){
 		double[,] results = new double[2,N];
@@ -211,12 +198,6 @@ class RPN{
 	}
 	public void printFormula(){
 		Console.WriteLine(formula);
-	}
-	public string getErrorMsg(){
-		return errorMsg;
-	}
-	public void printErrorMsg(){
-		Console.WriteLine(errorMsg);
 	}
 	public List<string> getInfixTokens(){
 		return infixTokens;
