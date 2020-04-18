@@ -120,7 +120,7 @@ class RPN{
 			Console.WriteLine("Divide tokens first");
 			return false;
 		}
-		Regex numRegex = new Regex(@"^[0-9]+$");
+		Regex numRegex = new Regex(@"^\d*\,?\d*$");
 		string[] allowedTokens = new string[]{"(",")","+","-","/","*","^","x","abs","cos","exp","log","sin","tan","sqrt","cosh","sinh","tanh","acos","asin","atan"};
 		
 		foreach(string token in infixTokens){
@@ -164,7 +164,7 @@ class RPN{
 			return double.NaN;
 		}
 		Stack<string> s = new Stack<string>();
-		Regex numRegex = new Regex(@"^[0-9]+$");
+		Regex numRegex = new Regex(@"^\d*\,?\d*$");
 		string mathFunctions = "abs cos exp log sin tan sqrt cosh sinh tanh acos asin atan";
 		foreach(string token in postfixTokens){
 			if(numRegex.IsMatch(token)){
