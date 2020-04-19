@@ -2,3 +2,8 @@
 /bin/*
 /obj
 /obj/*
+appsettings*
+*.old
+Startup*
+/Properties/
+/Properties/*

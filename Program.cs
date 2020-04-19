@@ -1,54 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 
-class Program{
-	static void Main(string[] args){
-		try{
-			rpn rpn;
-			if(args.Length==0 || args.Length==3 || args.Length>5)
-				throw new rpnException("Incorrect number of parameters");
-			else if(args.Length==1){
-				rpn = new rpn(args[0]);
-				rpn.divideTokens();
-				rpn.printInfix();
-				rpn.toPostfix();
-				rpn.printPostfix();
-				List<string> postfixTokens = rpn.getInfixTokens();
-				foreach(string token in postfixTokens)
-					if(token=="x")
-						return;
-				Console.WriteLine(rpn.evaluateForX(0));
-			}else if(args.Length==2){
-				rpn = new rpn(args[0]);
-				rpn.divideTokens();
-				rpn.printInfix();
-				rpn.toPostfix();
-				rpn.printPostfix();
-				Console.WriteLine(rpn.evaluateForX(double.Parse(args[1])));
-			}else if(args.Length==4){
-				rpn = new rpn(args[0]);
-				rpn.divideTokens();
-				rpn.printInfix();
-				rpn.toPostfix();
-				rpn.printPostfix();
-				double[,] result = rpn.evaluateForRange(double.Parse(args[1]),double.Parse(args[2]),int.Parse(args[3]));
-				for(int i=0; i<result.GetLength(1); i++)
-					Console.WriteLine($"{result[0,i]} => {result[1,i]}");
-			}else{
-				rpn = new rpn(args[0]);
-				rpn.divideTokens();
-				rpn.printInfix();
-				rpn.toPostfix();
-				rpn.printPostfix();
-				Console.WriteLine(rpn.evaluateForX(double.Parse(args[1])));
-				double[,] result = rpn.evaluateForRange(double.Parse(args[2]),double.Parse(args[3]),int.Parse(args[4]));
-				for(int i=0; i<result.GetLength(1); i++)
-					Console.WriteLine($"{result[0,i]} => {result[1,i]}");
-			}
-		}catch(rpnException e){
-			Console.WriteLine("Hey boss, problem:\n"+e.Message);
-		}catch(Exception){
-			Console.WriteLine("Hey boss, problem:\nunknown error");
+namespace TungstenBravo{
+	public class Program{
+		public static void Main(string[] args){
+			CreateHostBuilder(args).Build().Run();
 		}
+
+		public static IHostBuilder CreateHostBuilder(string[] args) =>
+			Host.CreateDefaultBuilder(args)
+				.ConfigureWebHostDefaults(webBuilder =>{
+					webBuilder.UseStartup<Startup>();
+				});
 	}
 }
