@@ -7,13 +7,13 @@ namespace TungstenBravo.Controllers{
 	public class tokensController:ControllerBase{
 		[HttpGet]
 		public IActionResult get(string formula=""){
-			if(formula=="coffee"){
-				var data = new{
-					status="I'm a teapot"
-				};
-				return StatusCode(418,data);
-			}
 			try{
+				if(formula=="coffee"){
+					var cData = new{
+						status="I'm a teapot"
+					};
+					return StatusCode(418,cData);
+				}
 				if(string.IsNullOrEmpty(formula))
 					throw new rpnException("formula empty");
 				rpn r = new rpn(formula);
@@ -25,7 +25,6 @@ namespace TungstenBravo.Controllers{
 					}
 				};
 				return Ok(data);
-
 			}catch(rpnException e){
 				var data = new{
 					status="error",
