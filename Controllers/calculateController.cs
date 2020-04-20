@@ -13,7 +13,6 @@ namespace TungstenBravo.Controllers{
 					throw new rpnException("formula empty");
 				bool gotX = false;
 				rpn r = new rpn(formula);
-				r.divideTokens();
 				List<string> infixTokens = r.getInfixTokens();
 				foreach(string token in infixTokens){
 					if(token=="x"){
@@ -25,7 +24,6 @@ namespace TungstenBravo.Controllers{
 					throw new rpnException("specify x value");
 				else if(!gotX)
 					x=0;
-				r.toPostfix();
 				var data = new{
 					status="ok",
 					result=r.evaluateForX(x)
@@ -58,7 +56,6 @@ namespace TungstenBravo.Controllers{
 					throw new rpnException("n parameter missing or <1");
 				bool gotX = false;
 				rpn r = new rpn(formula);
-				r.divideTokens();
 				List<string> infixTokens = r.getInfixTokens();
 				foreach(string token in infixTokens){
 					if(token=="x"){
@@ -68,7 +65,6 @@ namespace TungstenBravo.Controllers{
 				}
 				if(!gotX)
 					throw new rpnException("range calculation not needed, no x provided in formula");
-				r.toPostfix();
 				double[,] results = r.evaluateForRange(from,to,n);
 				List<dynamic> resultObjects = new List<dynamic>();
 				for(int i=0; i<results.GetLength(1); i++){
@@ -79,7 +75,7 @@ namespace TungstenBravo.Controllers{
 				}
 				var data = new{
 					status="ok",
-					results=resultObjects.ToArray()
+					result=resultObjects.ToArray()
 				};
 				return Ok(data);
 			}catch(rpnException e){
