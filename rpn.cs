@@ -206,6 +206,8 @@ namespace TungstenBravo{
 		Console.WriteLine(formula);
 	}
 	public List<string> getInfixTokens(){
+		if(!tokensDivided)
+			divideTokens();
 		return infixTokens;
 	}
 	public void printInfix(){
@@ -216,6 +218,8 @@ namespace TungstenBravo{
 		Console.WriteLine();
 	}
 	public List<string> getPostfixTokens(){
+		if(!postfixParsed)
+			toPostfix();
 		return postfixTokens;
 	}
 	public void printPostfix(){
