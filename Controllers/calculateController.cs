@@ -11,18 +11,11 @@ namespace TungstenBravo.Controllers{
 			try{
 				if(string.IsNullOrEmpty(formula))
 					throw new rpnException("formula empty");
-				bool gotX = false;
 				rpn r = new rpn(formula);
 				List<string> infixTokens = r.getInfixTokens();
-				foreach(string token in infixTokens){
-					if(token=="x"){
-						gotX=true;
-						break;
-					}
-				}
-				if(gotX && Double.IsNaN(x))
+				if(infixTokens.Contains("x") && Double.IsNaN(x))
 					throw new rpnException("specify x value");
-				else if(!gotX)
+				else
 					x=0;
 				var data = new{
 					status="ok",
@@ -54,16 +47,9 @@ namespace TungstenBravo.Controllers{
 					throw new rpnException("to parameter missing");
 				if(n<1)
 					throw new rpnException("n parameter missing or <1");
-				bool gotX = false;
 				rpn r = new rpn(formula);
 				List<string> infixTokens = r.getInfixTokens();
-				foreach(string token in infixTokens){
-					if(token=="x"){
-						gotX=true;
-						break;
-					}
-				}
-				if(!gotX)
+				if(!infixTokens.Contains("x"))
 					throw new rpnException("range calculation not needed, no x provided in formula");
 				double[,] results = r.evaluateForRange(from,to,n);
 				List<dynamic> resultObjects = new List<dynamic>();
