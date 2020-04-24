@@ -46,8 +46,10 @@ namespace TungstenBravo.Controllers{
 					throw new rpnException("from parameter missing");
 				if(Double.IsNaN(to))
 					throw new rpnException("to parameter missing");
-				if(n<1)
-					throw new rpnException("n parameter missing or <1");
+				if(n==1)
+					throw new rpnException("range calculation not needed, use single calculate pls");
+				if(n<2)
+					throw new rpnException("n parameter missing or <2");
 				rpn r = new rpn(formula);
 				List<string> infixTokens = r.getInfixTokens();
 				bool gotX = infixTokens.Contains("x");
