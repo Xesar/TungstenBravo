@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Cors;
 
 namespace TungstenBravo.Controllers{
+	[EnableCors("chuwdu")]
 	[ApiController]
 	[Route("api/[controller]")]
 	public class calculateController:ControllerBase{

@@ -1,7 +1,9 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Cors;
 
 namespace TungstenBravo.Controllers{
+	[EnableCors("chuwdu")]
 	[ApiController]
 	[Route("api/[controller]")]
 	public class tokensController:ControllerBase{
