@@ -83,12 +83,12 @@ namespace TungstenBravo{
 				infixTokens.Add(formula[i].ToString());
 				if(i+1<formula.Length && formula[i]==')' && (formula[i+1]=='x' || "1234567890".Contains(formula[i+1])))
 					infixTokens.Add("*");
-			}else if(shortToken.Length>0 && shortTokens.Contains(shortToken)){
-				infixTokens.Add(shortToken);
-				i+=2;
 			}else if(longToken.Length>0 && longTokens.Contains(longToken)){
 				infixTokens.Add(longToken);
 				i+=3;
+			}else if(shortToken.Length>0 && shortTokens.Contains(shortToken)){
+				infixTokens.Add(shortToken);
+				i+=2;
 			}else{
 				if(i+1<formula.Length && formula[i]=='x' && "1234567890".Contains(formula[i+1])){
 					infixTokens.Add("x");
